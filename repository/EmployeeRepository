@@ -1,0 +1,15 @@
+package com.johnbryce.repository;
+
+import com.johnbryce.entity.Employee;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
+    Optional<Employee> findByUuid(UUID uuid);
+
+    //Optional<Employee> findByEmailAndPassword(String email, String password);
+}
