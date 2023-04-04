@@ -1,0 +1,53 @@
+package com.johnbryce.mapper;
+
+import com.johnbryce.entity.Employee;
+import com.johnbryce.entity.Task;
+import com.johnbryce.web.dto.EmployeeDto;
+import com.johnbryce.web.dto.TaskDto;
+
+import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
+
+@Component
+public class AppMapperImpl implements AppMapper {
+    @Override
+    public TaskDto map(Task task) {
+        return new TaskDto(task.getUuid(), task.getDescription(), task.getDeadLine());
+    }
+
+    @Override
+    public Task map(TaskDto dto) {
+        return Task.builder()
+                   .uuid(dto.getUuid())
+                   .description(dto.getDescription())
+                   .deadLine(dto.getDeadLine())
+                   .build();
+    }
+
+    @Override
+    public EmployeeDto map(Employee employee) {
+        return EmployeeDto.builder()
+                          .uuid(employee.getUuid())
+                          .name(employee.getName())
+                          .email(employee.getEmail())
+                          .tasks(employee.getTasks()
+                                         .stream()
+                                         .map(this::map)
+                                         .collect(Collectors.toList()))
+                          .build();
+    }
+
+    @Override
+    public Employee map(EmployeeDto dto) {
+        return Employee.builder()
+                .uuid(dto.getUuid())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .tasks(dto.getTasks()
+                               .stream()
+                               .map(this::map)
+                               .collect(Collectors.toSet()))
+                .build();
+    }
+}
