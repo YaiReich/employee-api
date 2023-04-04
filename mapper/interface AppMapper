@@ -1,0 +1,17 @@
+package com.johnbryce.mapper;
+
+import com.johnbryce.entity.Employee;
+import com.johnbryce.entity.Task;
+import com.johnbryce.web.dto.EmployeeDto;
+import com.johnbryce.web.dto.TaskDto;
+
+public interface AppMapper {
+    TaskDto map (Task task);
+
+    Task map (TaskDto dto);
+
+    EmployeeDto map (Employee employee);
+
+    Employee map (EmployeeDto dto);
+
+}
