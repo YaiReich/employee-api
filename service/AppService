@@ -1,0 +1,16 @@
+package com.johnbryce.service;
+
+import com.johnbryce.web.dto.EmployeeDto;
+import com.johnbryce.web.dto.TaskDto;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+public interface AppService {
+    Optional<EmployeeDto> getEmployee(UUID uuid);
+
+    Optional<TaskDto> addTask(TaskDto taskDto, UUID employeeUuid);
+
+    List<TaskDto> getAllTasks(UUID employeeUuid);
+}
