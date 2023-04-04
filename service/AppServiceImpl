@@ -1,0 +1,69 @@
+package com.johnbryce.service;
+
+import com.johnbryce.entity.Employee;
+import com.johnbryce.entity.Task;
+import com.johnbryce.mapper.AppMapper;
+import com.johnbryce.repository.EmployeeRepository;
+import com.johnbryce.repository.TaskRepository;
+import com.johnbryce.web.dto.EmployeeDto;
+import com.johnbryce.web.dto.TaskDto;
+
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class AppServiceImpl implements AppService {
+
+    private final AppMapper mapper;
+    private final EmployeeRepository employeeRepository;
+    private final TaskRepository taskRepository;
+
+    @Override
+    public Optional<EmployeeDto> getEmployee(UUID uuid) {
+        return employeeRepository.findByUuid(uuid)
+                .map(new Function<Employee, EmployeeDto>() {
+                    @Override
+                    public EmployeeDto apply(Employee employee){
+                        return mapper.map(employee);
+                    }
+                });
+    }
+
+    @Override
+    public Optional<TaskDto> addTask(TaskDto taskDto, UUID employeeUuid) {
+        Optional<Employee> optEmployee = employeeRepository.findByUuid(employeeUuid);
+
+        if (optEmployee.isPresent()){
+            Employee employee = optEmployee.get();
+            Task task = mapper.map(taskDto);
+
+            task.setEmployee(employee);
+
+            Task savedTask = taskRepository.save(task);
+
+            return Optional.of(mapper.map(savedTask));
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public List<TaskDto> getAllTasks(UUID employeeUuid) {
+        Optional<Employee> optEmployee = employeeRepository.findByUuid(employeeUuid);
+
+        if (optEmployee.isEmpty()){
+
+            return Collections.emptyList();
+        }
+
+        return mapper.map(optEmployee.get()).getTasks();
+    }
+}
